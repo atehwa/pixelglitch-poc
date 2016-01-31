@@ -47,8 +47,8 @@ function nextFrame() {
   requestAnimationFrame(nextFrame);
 }
 
-function init() {
-  stage = elem('game');
+function init(stagename) {
+  stage = elem(stagename);
   stage.removeChild(elem('jswarning'));
   requestAnimationFrame(nextFrame);
 }
