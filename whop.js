@@ -27,10 +27,14 @@ function makeSprite(src, x, y) {
   var node = img(src, x, y);
   var hooks = [];
 
-  function move(nx, ny) {
+  function moveTo(nx, ny) {
     x = nx;
     y = ny;
     movenode(node, x, y);
+  }
+
+  function move(xd, yd) {
+    moveTo(x + xd, y + yd);
   }
 
   var inst = {
@@ -40,9 +44,10 @@ function makeSprite(src, x, y) {
     ySpeed: function getYSpeed() { return yd; },
 
     move: move,
+    moveTo: moveTo,
     update: function update() {
       hooks.forEach(function(hook) { hook(); });
-      move(x + xd, y + yd);
+      move(xd, yd);
     },
 
     setSpeed: function setSpeed(nxd, nyd) { xd = nxd; yd = nyd; },
@@ -65,13 +70,16 @@ function nextFrame() {
   requestAnimationFrame(nextFrame);
 }
 
-function init(stagename) {
-  stage = elem(stagename);
-  stage.removeChild(elem('jswarning'));
-  requestAnimationFrame(nextFrame);
-}
 
-return { initialise: init, makeSprite: makeSprite };
+return {
+  initialise: function init(stagename) {
+    stage = elem(stagename);
+    stage.removeChild(elem('jswarning'));
+    requestAnimationFrame(nextFrame);
+  },
+  makeSprite: makeSprite,
+  allSprites: function allSprites() { return sprites; }
+};
 
 })();
 
