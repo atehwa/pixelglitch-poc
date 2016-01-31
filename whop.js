@@ -25,6 +25,7 @@ function img(src, x, y) {
 function makeSprite(src, x, y) {
   var xd = 0, yd = 0;
   var node = img(src, x, y);
+  var hooks = [];
 
   function move(nx, ny) {
     x = nx;
@@ -32,11 +33,28 @@ function makeSprite(src, x, y) {
     movenode(node, x, y);
   }
 
-  function update() { move(x + xd, y + yd); }
-  function setSpeed(nxd, nyd) { xd = nxd; yd = nyd; }
-  function accel(xdd, ydd) { setSpeed(xd + xdd, yd + ydd); }
+  var inst = {
+    x: function getX() { return x; },
+    y: function getY() { return y; },
+    xSpeed: function getXSpeed() { return xd; },
+    ySpeed: function getYSpeed() { return yd; },
 
-  var inst = { move: move, update: update, setSpeed: setSpeed, accel: accel };
+    move: move,
+    update: function update() {
+      hooks.forEach(function(hook) { hook(); });
+      move(x + xd, y + yd);
+    },
+
+    setSpeed: function setSpeed(nxd, nyd) { xd = nxd; yd = nyd; },
+    accel: function accel(xdd, ydd) { inst.setSpeed(xd + xdd, yd + ydd); },
+    whenMoved: function whenMoved(cb) { hooks.push(cb); },
+
+    clear: function clear() {
+      hooks = [];
+      inst.setSpeed(0, 0);
+    }
+  }
+
   sprites.push(inst);
 
   return inst;
