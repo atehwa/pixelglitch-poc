@@ -7,6 +7,7 @@ var node = document.createElement.bind(document);
 var elem = document.getElementById.bind(document);
 var stage;
 var sprites = [];
+var keyHandlers = {};
 
 function movenode(n, x, y) {
   n.style.left = x + 'px';
@@ -70,15 +71,39 @@ function nextFrame() {
   requestAnimationFrame(nextFrame);
 }
 
+function handleKey(e) {
+  handler = keyHandlers[e.keyCode];
+  if (!handler) return true;
+  handler();
+  if (e.preventDefault) e.preventDefault();
+  return false;
+}
+
+function whenPressed(c, f) {
+  keyHandlers[c.charCodeAt(0)] = f;
+}
+
+function installHandler(keyCode) {
+  return function handleKey(f) {
+    keyHandlers[keyCode] = f;
+  }
+}
 
 return {
   initialise: function init(stagename) {
     stage = elem(stagename);
     stage.removeChild(elem('jswarning'));
+    document.onkeydown = handleKey;
     requestAnimationFrame(nextFrame);
   },
   makeSprite: makeSprite,
-  allSprites: function allSprites() { return sprites; }
+  handleKey: handleKey,
+  allSprites: function allSprites() { return sprites; },
+  whenPressed: whenPressed,
+  whenLeft: installHandler(37),
+  whenUp: installHandler(38),
+  whenRight: installHandler(39),
+  whenDown: installHandler(40)
 };
 
 })();
