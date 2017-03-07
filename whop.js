@@ -14,6 +14,11 @@ function movenode(n, x, y) {
   n.style.top = y + 'px';
 }
 
+function resizenode(n, w, h) {
+  n.style.width = w + 'px';
+  n.style.height = h + 'px';
+}
+
 function img(src, x, y) {
   var n = node('img');
   n.src = src;
@@ -27,6 +32,7 @@ function makeSprite(src, x, y) {
   var xd = 0, yd = 0;
   var node = img(src, x, y);
   var hooks = [];
+  var index_in_sprites = 0;
 
   function moveTo(nx, ny) {
     x = nx;
@@ -51,6 +57,10 @@ function makeSprite(src, x, y) {
       move(xd, yd);
     },
 
+    setDims: function setDims(nwidth, nheight) {
+      resizenode(node, nwidth, nheight);
+    },
+
     setSpeed: function setSpeed(nxd, nyd) { xd = nxd; yd = nyd; },
     accel: function accel(xdd, ydd) { inst.setSpeed(xd + xdd, yd + ydd); },
     whenMoved: function whenMoved(cb) { hooks.push(cb); },
@@ -58,10 +68,15 @@ function makeSprite(src, x, y) {
     clear: function clear() {
       hooks = [];
       inst.setSpeed(0, 0);
+    },
+
+    destroy: function destroy() {
+      delete sprites[index_in_sprites];
+      node.parentElement.removeChild(node);
     }
   }
 
-  sprites.push(inst);
+  index_in_sprites = sprites.push(inst) - 1;
 
   return inst;
 }
