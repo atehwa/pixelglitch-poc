@@ -61,6 +61,14 @@ function makeSprite(src, x, y) {
       resizenode(node, nwidth, nheight);
     },
 
+    setGhost: function setGhost(transparency) {
+      if (transparency === 1) node.style.visibility = 'hidden';
+      else {
+	node.style.opacity = (1-transparency);
+	node.style.visibility = 'visible';
+      }
+    },
+
     setSpeed: function setSpeed(nxd, nyd) { xd = nxd; yd = nyd; },
     accel: function accel(xdd, ydd) { inst.setSpeed(xd + xdd, yd + ydd); },
     whenMoved: function whenMoved(cb) { hooks.push(cb); },
@@ -87,7 +95,7 @@ function nextFrame() {
 }
 
 function handleKey(e) {
-  handler = keyHandlers[e.keyCode];
+  var handler = keyHandlers[e.keyCode];
   if (!handler) return true;
   handler();
   if (e.preventDefault) e.preventDefault();
