@@ -53,12 +53,16 @@ function makeSprite(src, x, y) {
     move: move,
     moveTo: moveTo,
     update: function update() {
-      hooks.forEach(function(hook) { hook(); });
+      hooks = hooks.filter(function(hook) { return hook(); });
       move(xd, yd);
     },
 
     setDims: function setDims(nwidth, nheight) {
       resizenode(node, nwidth, nheight);
+    },
+
+    setPicture: function setPicture(url) {
+      node.src = url;
     },
 
     setGhost: function setGhost(transparency) {
