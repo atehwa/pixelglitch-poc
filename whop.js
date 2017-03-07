@@ -1,4 +1,4 @@
-
+"use strict";
 // vim:sw=2:
 
 var whop = whop || (function () {
